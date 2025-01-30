@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>Admin Panel</h2>
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active" onclick="showSection('dashboard')"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="#" onclick="showSection('employees')"><i class="fas fa-users"></i> Employees</a></li>
+        <li><a href="#" onclick="showSection('history')"><i class="fas fa-history"></i> Shift History</a></li>
+        <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <h1 id="sectionTitle">Dashboard</h1>
+        <div class="user-info">
+          <span>Welcome, Admin</span>
+          <i class="fas fa-user-circle"></i>
+        </div>
+      </div>
+
+      <!-- Dashboard Section -->
+      <div id="dashboard" class="section">
+        <div class="card">
+          <h2>Welcome to the Admin Panel</h2>
+          <p>Use the sidebar to navigate through the different sections.</p>
+        </div>
+      </div>
+
+      <!-- Employees Section -->
+      <div id="employees" class="section" style="display: none;">
+        <div class="card">
+          <h2>Add Employee</h2>
+          <form id="addEmployeeForm">
+            <div class="form-group">
+              <label for="empName">Name:</label>
+              <input type="text" id="empName" required>
+            </div>
+            <div class="form-group">
+              <label for="empUsername">Username:</label>
+              <input type="text" id="empUsername" required>
+            </div>
+            <div class="form-group">
+              <label for="empPassword">Password:</label>
+              <input type="password" id="empPassword" required>
+            </div>
+            <button type="submit" class="btn-primary">Add Employee</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Employee List</h2>
+          <div class="search-filter">
+            <input type="text" id="searchInput" placeholder="Search by name or username">
+            <select id="filterSelect">
+              <option value="all">All</option>
+              <option value="working">Working</option>
+              <option value="paused">Paused</option>
+              <option value="not-started">Not Started</option>
+            </select>
+          </div>
+          <table id="employeeTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Shift Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows will be added dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Shift History Section -->
+      <div id="history" class="section" style="display: none;">
+        <div class="card">
+          <h2>Shift History</h2>
+          <table id="shiftHistoryTable">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Total Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows will be added dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Employee Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Edit Employee</h2>
+      <form id="editEmployeeForm">
+        <div class="form-group">
+          <label for="editEmpName">Name:</label>
+          <input type="text" id="editEmpName" required>
+        </div>
+        <div class="form-group">
+          <label for="editEmpUsername">Username:</label>
+          <input type="text" id="editEmpUsername" required>
+        </div>
+        <div class="form-group">
+          <label for="editEmpPassword">Password:</label>
+          <input type="password" id="editEmpPassword" required>
+        </div>
+        <button type="submit" class="btn-primary">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notification -->
+  <div id="notification" class="notification"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

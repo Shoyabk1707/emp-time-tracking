@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Panel</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="employee-container">
+    <div class="header">
+      <h1>Employee Panel</h1>
+      <div class="user-actions">
+        <button id="backToAdminBtn" class="btn-secondary" style="display: none;"><i class="fas fa-arrow-left"></i> Back to Admin</button>
+        <button onclick="logout()" class="btn-secondary"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+
+    <div class="employee-details">
+      <p id="empName">Name: </p>
+      <p id="empUsername">Username: </p>
+    </div>
+
+    <div class="tracker">
+      <p id="status">Status: Not Started</p>
+      <p id="timeWorked">Time Worked: 00:00:00</p>
+      <button id="startBtn">Start Shift</button>
+      <button id="pauseBtn" disabled>Pause Shift</button>
+      <button id="stopBtn" disabled>Stop Shift</button>
+    </div>
+
+    <div class="history">
+      <h2>Shift History</h2>
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Total Time Worked</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be added dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="employee.js"></script>
+</body>
+</html>

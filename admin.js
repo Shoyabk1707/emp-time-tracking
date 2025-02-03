@@ -102,7 +102,6 @@ function viewShiftHistory(username) {
   
     // Set flag to indicate admin redirection
     localStorage.setItem('adminView', 'true');
-  
     window.location.href = 'employee.html';
   }
 
@@ -125,6 +124,45 @@ function renderHistory() {
       row.insertCell().textContent = shift.totalTime;
     });
   }
+
+  // Function to render shift history for all employees
+function renderShiftHistory() {
+  const shiftHistoryTable = document.getElementById('shiftHistoryTable').getElementsByTagName('tbody')[0];
+  shiftHistoryTable.innerHTML = ''; // Clear existing rows
+
+  users.forEach(user => {
+    if (user.role === 'employee' && user.shiftHistory) {
+      user.shiftHistory.forEach(shift => {
+        const row = shiftHistoryTable.insertRow();
+        row.insertCell().textContent = user.name; // Employee name
+        row.insertCell().textContent = shift.date; // Date
+        row.insertCell().textContent = shift.startTime; // Start time
+        row.insertCell().textContent = shift.endTime; // End time
+        row.insertCell().textContent = shift.totalTime; // Total time worked
+      });
+    }
+  });
+}
+
+// Call this function when the Shift History section is shown
+function showSection(sectionId) {
+  document.querySelectorAll('.section').forEach(section => {
+    section.style.display = 'none';
+  });
+  document.getElementById(sectionId).style.display = 'block';
+  document.getElementById('sectionTitle').textContent = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+
+  // Highlight active sidebar link
+  document.querySelectorAll('.sidebar-menu a').forEach(link => {
+    link.classList.remove('active');
+  });
+  document.querySelector(`.sidebar-menu a[onclick="showSection('${sectionId}')"]`).classList.add('active');
+
+  // Render shift history if the section is "history"
+  if (sectionId === 'history') {
+    renderShiftHistory();
+  }
+}
   
 
 // Search and Filter
@@ -195,13 +233,13 @@ function updateEmployeeStatus() {
   }
   
 
-  // Polling every 2 seconds to update employee status on admin panel
+// Polling every 2 seconds to update employee status on admin panel
 setInterval(updateEmployeeStatus, 2000);
 
 // On page load, immediately update employee status
 updateEmployeeStatus();
 
   
-  // Initial Render
-  showSection('dashboard');
-  renderEmployeeTable();
+// Initial Render
+showSection('dashboard');
+renderEmployeeTable();

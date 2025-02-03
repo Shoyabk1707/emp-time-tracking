@@ -6,6 +6,10 @@
   <title>Employee Panel</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
 </head>
 <body>
   <div class="employee-container">
@@ -13,6 +17,7 @@
       <h1>Employee Panel</h1>
       <div class="user-actions">
         <button id="backToAdminBtn" class="btn-secondary" style="display: none;"><i class="fas fa-arrow-left"></i> Back to Admin</button>
+        <button id="downloadDataBtn" class="btn-primary"><i class="fas fa-download"></i> Download Data</button>
         <button onclick="logout()" class="btn-secondary"><i class="fas fa-sign-out-alt"></i> Logout</button>
       </div>
     </div>
@@ -22,11 +27,21 @@
       <p id="empUsername">Username: </p>
     </div>
 
-    <div class="tracker">
+    <!-- <div class="tracker">
       <p id="status">Status: Not Started</p>
       <p id="timeWorked">Time Worked: 00:00:00</p>
       <button id="startBtn">Start Shift</button>
       <button id="pauseBtn" disabled>Pause Shift</button>
+      <button id="stopBtn" disabled>Stop Shift</button>
+    </div> -->
+
+    <div class="tracker">
+      <p id="status">Status: Not Started</p>
+      <p id="timeWorked">Time Worked: 00:00:00</p>
+      <!-- <p id="breakTime">Break Time: 00:00:00</p> -->
+      <button id="startBtn">Start Shift</button>
+      <button id="pauseBtn" disabled>Pause Shift</button>
+      <!-- <button id="breakBtn" disabled>Take Break</button> -->
       <button id="stopBtn" disabled>Stop Shift</button>
     </div>
 
@@ -48,6 +63,6 @@
     </div>
   </div>
 
-  <script src="employee.js"></script>
+  <script src="employee2.js"></script>
 </body>
 </html>

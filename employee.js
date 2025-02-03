@@ -7,17 +7,17 @@ if (!employee) {
     alert('No employee data found. Redirecting to login...');
     localStorage.removeItem('adminView'); // Ensure clean login if accessed incorrectly
     window.location.href = 'index.html';
-  } else {
+} else {
     // Ensure shiftHistory exists
     employee.shiftHistory = employee.shiftHistory || [];
-  
+    
     // Update UI only if elements exist
     const empNameEl = document.getElementById('empName');
     const empUsernameEl = document.getElementById('empUsername');
-  
+    
     if (empNameEl) empNameEl.textContent = `Name: ${employee.name}`;
     if (empUsernameEl) empUsernameEl.textContent = `Username: ${employee.username}`;
-  }
+}
   
 
 // Timer variables
@@ -26,6 +26,7 @@ let elapsedTime = 0;
 let timerInterval;
 let isPaused = false;
 let isTracking = false;
+let screenshotIntervalId = null; // Store interval ID for screenshots
 
 // DOM elements
 const statusText = document.getElementById('status');
@@ -34,6 +35,39 @@ const startBtn = document.getElementById('startBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const stopBtn = document.getElementById('stopBtn');
 const historyTable = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
+
+// Download Data Button
+document.getElementById('downloadDataBtn').addEventListener('click', () => {
+  downloadTimeTrackedData();
+});
+
+// Function to download time-tracked data as Excel
+function downloadTimeTrackedData() {
+  // Prepare data for the Excel file
+  const data = [
+    ["Employee Name","Date", "Start Time", "End Time", "Total Time Worked"]
+  ];
+
+  employee.shiftHistory.forEach(shift => {
+    data.push([
+      employee.name,
+      shift.date,
+      shift.startTime,
+      shift.endTime,
+      shift.totalTime,
+    ]);
+  });
+
+  // Create a worksheet
+  const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+  // Create a workbook
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Time Tracked Data");
+
+  // Generate Excel file and trigger download
+  XLSX.writeFile(workbook, `TimeTrackedData_${employee.username}.xlsx`);
+}
 
 // Check if there's saved time and shift status in localStorage on page load
 const savedData = JSON.parse(localStorage.getItem('employeeData'));
@@ -51,13 +85,12 @@ if (savedData) {
  stopBtn.disabled = !savedData.isTracking;
 }
 
-// Format time helper function
+// Helper function to format time
 function formatTime(milliseconds) {
   let totalSeconds = Math.floor(milliseconds / 1000);
   let hours = Math.floor(totalSeconds / 3600);
   let minutes = Math.floor((totalSeconds % 3600) / 60);
   let seconds = totalSeconds % 60;
-
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
@@ -111,6 +144,8 @@ startBtn.addEventListener('click', () => {
       isTracking: isTracking,
       isPaused: isPaused
     }));
+
+    startScreenshots(); // Start taking screenshots
   }
 });
 
@@ -123,12 +158,14 @@ pauseBtn.addEventListener('click', () => {
       pauseBtn.textContent = 'Pause Shift';
       employee.shiftStatus = 'Working';
       isPaused = false;
+      startScreenshots(); // Start taking screenshots
     } else {
       clearInterval(timerInterval);
       statusText.textContent = 'Status: Paused';
       pauseBtn.textContent = 'Resume Shift';
       employee.shiftStatus = 'Paused';
       isPaused = true;
+      stopScreenshots(); // Stop taking screenshots
     }
     // Update employee status in localStorage
     localStorage.setItem('employeeData', JSON.stringify({
@@ -138,6 +175,8 @@ pauseBtn.addEventListener('click', () => {
       isTracking: isTracking,
       isPaused: isPaused
     }));
+
+    
   });
   
 
@@ -177,6 +216,8 @@ stopBtn.addEventListener('click', () => {
   
     // Clear saved data from localStorage after shift ends
     localStorage.removeItem('employeeData');
+
+    stopScreenshots(); // Stop taking screenshots
   });
 
 // Function to update employee status in localStorage
@@ -189,13 +230,13 @@ function updateEmployeeStatusInLocalStorage() {
   }
 
 
-// Update employee in users array and localStorage
+// Function to update employee data in localStorage
 function updateEmployeeInUsers() {
-  const userIndex = users.findIndex(user => user.username === employee.username);
-  if (userIndex !== -1) {
-    users[userIndex] = employee;
-    localStorage.setItem('users', JSON.stringify(users));
-  }
+    const userIndex = users.findIndex(user => user.username === employee.username);
+    if (userIndex !== -1) {
+        users[userIndex] = employee;
+        localStorage.setItem('users', JSON.stringify(users));
+    }
 }
 
 // Render history on page load
@@ -220,6 +261,43 @@ function logout() {
   localStorage.removeItem('adminView');
   window.location.href = 'index.html';
 }
+
+
+// Function to capture screenshot
+function captureScreenshot() {
+  html2canvas(document.body).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      downloadScreenshot(imgData);
+  });
+}
+
+function downloadScreenshot(imgData) {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const a = document.createElement("a");
+  a.href = imgData;
+  a.download = `screenshot_${timestamp}.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function startScreenshots() {
+  if (!screenshotIntervalId) {
+      screenshotIntervalId = setInterval(() => {
+          if (isTracking && !isPaused) {
+              captureScreenshot();
+          }
+      }, 1 * 60 * 1000); // Capture screenshot every 10 minutes
+  }
+}
+
+function stopScreenshots() {
+  if (screenshotIntervalId) {
+      clearInterval(screenshotIntervalId);
+      screenshotIntervalId = null;
+  }
+}
+
 
 // Attach logout function to the logout button
 document.getElementById('logoutBtn').addEventListener('click', logout);
